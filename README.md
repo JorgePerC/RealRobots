@@ -17,3 +17,5 @@ https://ictsolved.github.io/remap-key-in-linux/
 * Install the distro distribution ROS is build on. Surely you can install a downgrade, but don't complicate things.
 * If your system has both Windows and Linux, from the [settings](https://askubuntu.com/questions/1083369/ubuntu-18-04-cannot-recognize-intel-wireless-ac-9260) disable fast start up
 * Install VSCode
+* Use rospack list to see all the packages installed. USe it to verify your instalation. rospack find packageName works in a simillar way
+* Install catkin tools
