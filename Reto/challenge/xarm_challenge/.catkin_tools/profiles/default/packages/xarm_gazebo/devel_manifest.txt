@@ -1,0 +1,5 @@
+xarm_ros/xarm_gazebo
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_gazebo/cmake.lock /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/./cmake.lock
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_gazebo/share/xarm_gazebo/cmake/xarm_gazeboConfig-version.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/xarm_gazebo/cmake/xarm_gazeboConfig-version.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_gazebo/share/xarm_gazebo/cmake/xarm_gazeboConfig.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/xarm_gazebo/cmake/xarm_gazeboConfig.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_gazebo/lib/pkgconfig/xarm_gazebo.pc /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/pkgconfig/xarm_gazebo.pc

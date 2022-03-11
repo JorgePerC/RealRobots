@@ -1,0 +1,5 @@
+xarm_ros/xarm_bringup
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_bringup/cmake.lock /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/./cmake.lock
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_bringup/share/xarm_bringup/cmake/xarm_bringupConfig-version.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/xarm_bringup/cmake/xarm_bringupConfig-version.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_bringup/share/xarm_bringup/cmake/xarm_bringupConfig.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/xarm_bringup/cmake/xarm_bringupConfig.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_bringup/lib/pkgconfig/xarm_bringup.pc /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/pkgconfig/xarm_bringup.pc

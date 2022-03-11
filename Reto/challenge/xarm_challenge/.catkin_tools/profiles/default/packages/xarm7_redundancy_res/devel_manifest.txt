@@ -1,0 +1,5 @@
+xarm_ros/examples/xarm7_redundancy_res
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm7_redundancy_res/cmake.lock /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/./cmake.lock
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm7_redundancy_res/share/xarm7_redundancy_res/cmake/xarm7_redundancy_resConfig.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/xarm7_redundancy_res/cmake/xarm7_redundancy_resConfig.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm7_redundancy_res/share/xarm7_redundancy_res/cmake/xarm7_redundancy_resConfig-version.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/xarm7_redundancy_res/cmake/xarm7_redundancy_resConfig-version.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm7_redundancy_res/lib/pkgconfig/xarm7_redundancy_res.pc /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/pkgconfig/xarm7_redundancy_res.pc

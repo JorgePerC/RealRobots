@@ -1,0 +1,6 @@
+xarm_ros/xarm_sdk
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_sdk/cmake.lock /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/./cmake.lock
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_sdk/share/xarm_sdk/cmake/xarm_sdkConfig.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/xarm_sdk/cmake/xarm_sdkConfig.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_sdk/share/xarm_sdk/cmake/xarm_sdkConfig-version.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/xarm_sdk/cmake/xarm_sdkConfig-version.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_sdk/lib/libxarm_cxx_sdk.so /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/libxarm_cxx_sdk.so
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_sdk/lib/pkgconfig/xarm_sdk.pc /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/pkgconfig/xarm_sdk.pc

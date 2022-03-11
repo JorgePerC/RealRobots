@@ -1,0 +1,6 @@
+xarm_ros/examples/run_recorded_traj
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/run_recorded_traj/cmake.lock /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/./cmake.lock
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/run_recorded_traj/share/run_recorded_traj/cmake/run_recorded_trajConfig-version.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/run_recorded_traj/cmake/run_recorded_trajConfig-version.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/run_recorded_traj/share/run_recorded_traj/cmake/run_recorded_trajConfig.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/run_recorded_traj/cmake/run_recorded_trajConfig.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/run_recorded_traj/lib/run_recorded_traj/xarm_traj_test /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/run_recorded_traj/xarm_traj_test
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/run_recorded_traj/lib/pkgconfig/run_recorded_traj.pc /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/pkgconfig/run_recorded_traj.pc

@@ -1,0 +1,5 @@
+xarm_ros/xarm_description
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_description/cmake.lock /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/./cmake.lock
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_description/share/xarm_description/cmake/xarm_descriptionConfig-version.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/xarm_description/cmake/xarm_descriptionConfig-version.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_description/share/xarm_description/cmake/xarm_descriptionConfig.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/xarm_description/cmake/xarm_descriptionConfig.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_description/lib/pkgconfig/xarm_description.pc /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/pkgconfig/xarm_description.pc
