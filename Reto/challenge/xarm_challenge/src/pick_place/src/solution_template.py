@@ -22,8 +22,9 @@ class Planner():
     #TODO: Initialise move it interface
     moveit_commander.roscpp_initialize(sys.argv)
     print("Move it commander Initialized")
-    #TODO: Initialize rosnode -> which one?
+    #TODO: Initialize rosnode -> The class defined downwards
     rospy.init_node('myNode', anonymous=True)
+    
     #Python node
 
     # Instantiate a robot commander
@@ -35,18 +36,40 @@ class Planner():
 
     self.group_name = "xarm6"
     self.move_group = moveit_commander.MoveGroupCommander(self.group_name)
+    # Start a channel for the trayectories msgs
+    self.display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
+                                                   moveit_msgs.msg.DisplayTrajectory,
+                                                   queue_size=20)
+    # Name of the reference name of the robot 
+    self.planning_frame = self.move_group.get_planning_frame()
+    print ("============ Planning frame:", self.planning_frame)
+
+    # Name of the endeffector
+    self.eef_link = self.move_group.get_end_effector_link()
+    print( "============ End effector link:", self.eef_link)
+
+    # We can get a list of all the groups in the robot:
+    group_names = self.robot.get_group_names()
+    print ("============ Available Planning Groups:", self.robot.get_group_names())
+    # Sometimes for debugging it is useful to print the entire state of the
+    # robot:
+    print ("============ Printing robot state")
+    print (self.robot.get_current_state())
+    print ("")
 
   def wait_for_state_update(self,box_name, box_is_known=False, box_is_attached=False, timeout=0.5):
 
     #TODO: Whenever we change something in moveit we need to make sure that the interface has been updated properly
-    
+
     pass
   
   def addObstacles(self):
 
     #TODO: Add obstables in the world
     box_pose = PoseStamped()
-    box_pose.header.frame_id = "panda_leftfinger"
+    box_pose.header.frame_id = str(self.eef_link) 
+      # In this case, we wanna have the box appear near the endeffector, so that's why we use it as a reference plane
+      # The frame_id in a message specifies the point of reference for data contained in that message. 
     box_pose.pose.orientation.w = 1.0
     box_pose.pose.position.z = 0.07 # slightly above the end effector
     box_name = "box"
@@ -81,22 +104,24 @@ class Planner():
 
     self.move_group.set_pose_target(pose_goal)
 
+    #self.move_group.go(joint_goal)
+
     """
     ELSE USE THIS TO PLAN AND PERFORM
     """
 
-    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
-    display_trajectory.trajectory_start = self.robot.get_current_state()
-    display_trajectory.trajectory.append(plan)
-    # Publish
-    display_trajectory_publisher.publish(display_trajectory);
+    # display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+    # display_trajectory.trajectory_start = self.robot.get_current_state()
+    # display_trajectory.trajectory.append(plan)
+    # # Publish
+    # display_trajectory_publisher.publish(display_trajectory)
 
-    self.move_group.execute(plan, wait=True)
+    # self.move_group.execute(plan, wait=True)
 
   def detachBox(self,box_name):
 
     #TODO: Open the gripper and call the service that releases the box
-    self.scene.remove_attached_object(eef_link, name=box_name)
+    self.scene.remove_attached_object(self.eef_link, name=box_name)
 
 
   def attachBox(self,box_name):
@@ -104,25 +129,15 @@ class Planner():
     #TODO: Close the gripper and call the service that releases the box
     grasping_group = 'hand'
     touch_links = self.robot.get_link_names(group=grasping_group)
-    self.scene.attach_box(eef_link, box_name, touch_links=touch_links)
+    self.scene.attach_box(self.eef_link, box_name, touch_links=touch_links)
 
 
 class myNode():
   def __init__(self):
-    # #TODO: Initialise ROS and create the service calls
-    # pub = rospy.Publisher('RequestGoal', String, queue_size=10)
-    # pub = rospy.Publisher('AttachObject', String, queue_size=10)
+    #TODO: Initialise ROS and create the service calls
     
-    # rospy.init_node('RequestGoal', anonymous=True)
-    # rospy.init_node('AttachObject', anonymous=True)
-    # Do we actually need it?
-    # rate = rospy.Rate(10) # 10hz
-    # while not rospy.is_shutdown():
-    #   hello_str = "hello world %s" % rospy.get_time()
-    #   rospy.loginfo(hello_str)
-    #   pub.publish(hello_str)
-    #   rate.sleep()    
     # Good practice trick, wait until the required services are online before continuing with the aplication
+      # These are already initalized elsewhere. 
     rospy.wait_for_service('RequestGoal')
     rospy.wait_for_service('AttachObject')
 
