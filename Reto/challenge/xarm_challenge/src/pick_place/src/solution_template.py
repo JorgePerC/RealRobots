@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 
+from fileinput import filename
 import rospy
 import sys
 import tf_conversions
@@ -13,6 +14,7 @@ from path_planner.srv import *
 from tf.transformations import *
 from moveit_msgs.msg import Grasp
 import math
+import xml.dom.minidom
 
 
 class Planner():
@@ -72,7 +74,7 @@ class Planner():
       # The frame_id in a message specifies the point of reference for data contained in that message. 
     box_pose.pose.orientation.w = 1.0
     box_pose.pose.position.z = 0.07 # slightly above the end effector
-    box_name = "box"
+    box_name = "boxxita"
     self.scene.add_box(box_name, box_pose, size=(0.1, 0.1, 0.1))
 	
     #Cargo names
@@ -83,40 +85,25 @@ class Planner():
     boxes = ["DepositBoxGreen",
                "DepositBoxRed",
                "DepositBoxBlue"]
+    return box_name
 
   def goToPose(self,pose_goal):
-
     #TODO: Code used to move to a given position using move it
-    joint_goal = self.move_group.get_current_joint_values()
-    joint_goal[0] = 0
-    joint_goal[1] = -math.pi/4
-    joint_goal[2] = 0
-    joint_goal[3] = -math.pi/2
-    joint_goal[4] = 0
-    joint_goal[5] = math.pi/3
-    joint_goal[6] = 0
 
-    pose_goal = Pose()
-    pose_goal.orientation.w = 1.0
-    pose_goal.position.x = 0.4
-    pose_goal.position.y = 0.1
-    pose_goal.position.z = 0.4
-
+    # First, we plan the motion path to get to the desired pose
     self.move_group.set_pose_target(pose_goal)
 
-    #self.move_group.go(joint_goal)
+    ## Now, we call the planner to compute the plan and execute it.
+    plan = self.move_group.go(wait=True)
 
-    """
-    ELSE USE THIS TO PLAN AND PERFORM
-    """
+    #self.move_group.execute(plan, wait=True)
 
-    # display_trajectory = moveit_msgs.msg.DisplayTrajectory()
-    # display_trajectory.trajectory_start = self.robot.get_current_state()
-    # display_trajectory.trajectory.append(plan)
-    # # Publish
-    # display_trajectory_publisher.publish(display_trajectory)
+    # Calling `stop()` ensures that there is no residual movement
+    self.move_group.stop()
 
-    # self.move_group.execute(plan, wait=True)
+     # Clear your targets after planning with poses.
+    self.move_group.clear_pose_targets()
+
 
   def detachBox(self,box_name):
 
@@ -127,8 +114,11 @@ class Planner():
   def attachBox(self,box_name):
 
     #TODO: Close the gripper and call the service that releases the box
-    grasping_group = 'hand'
+    grasping_group = "xarm_gripper"
     touch_links = self.robot.get_link_names(group=grasping_group)
+    print("Touch links del attachBox")
+    print(touch_links)
+    print("-----")
     self.scene.attach_box(self.eef_link, box_name, touch_links=touch_links)
 
 
@@ -140,7 +130,22 @@ class myNode():
       # These are already initalized elsewhere. 
     rospy.wait_for_service('RequestGoal')
     rospy.wait_for_service('AttachObject')
-
+    
+  def getBoxCoordinateFromXML(self, fileName):
+    # After we've included the corresponding library (and installed it) 
+    # We call the following code to get the poses (coordinates and orientation)
+    # For the boxes in the /xarm_example1_table.world
+    xmlFile = xml.dom.minidom.parse(fileName)
+    boxes = xmlFile.getElementsByTagName("model")
+    print("----------")
+    for box in boxes:
+        sid = box.getAttribute("name")
+        pose = box.getElementsByTagName("pose")
+        
+        print("id:", sid, "pose", )
+        for i in range (pose.length):
+          print(pose.item(i).firstChild.nodeValue, ) #, end=", "
+        print("")
   def getGoal(self,action):
 
     #TODO: Call the service that will provide you with a suitable target for the movement
@@ -153,9 +158,24 @@ class myNode():
 
   def main(self):
     #TODO: Main code that contains the aplication
+    
+    # Init robot instrunction planner
     self.planner = Planner()
-    self.planner.addObstacles()
+    # Add an obstacle to the environment
+    b_name = self.planner.addObstacles()
+    # MOve the robot to a desired position
+    pose_goal = Pose()
+    pose_goal.orientation.w = 0
+    pose_goal.position.x = 0.0
+    pose_goal.position.y = 0.05
+    pose_goal.position.z = 0.0
 
+    #self.planner.goToPose(pose_goal)
+
+    #self.planner.attachBox(b_name)
+    fileName = "/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/src/xarm_ros/xarm_gazebo/worlds/xarm_example1_table.world"
+    print("\t Going to ", fileName)
+    self.getBoxCoordinateFromXML(fileName)
     rospy.signal_shutdown("Task Completed")
 
 
