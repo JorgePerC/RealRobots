@@ -1,0 +1,31 @@
+digraph G {
+"link_base" -> "gazebo_base"[label="Broadcaster: /robot_base_broadcaster\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1126.563 sec old)\nBuffer length: 0.000 sec\n"];
+"world" -> "link_base"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1126.563 sec old)\nBuffer length: 0.000 sec\n"];
+"link_eef" -> "xarm_gripper_base_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1126.563 sec old)\nBuffer length: 0.000 sec\n"];
+"link6" -> "link_eef"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1126.563 sec old)\nBuffer length: 0.000 sec\n"];
+"link5" -> "link6"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.250 Hz\nMost recent transform: 1126.546 ( 0.017 sec old)\nBuffer length: 4.000 sec\n"];
+"xarm_gripper_base_link" -> "link_tcp"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1126.563 sec old)\nBuffer length: 0.000 sec\n"];
+"sensor_frame" -> "world"[label="Broadcaster: /base_broadcaster\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1126.563 sec old)\nBuffer length: 0.000 sec\n"];
+"sensor_frame" -> "BlueBox"[label="Broadcaster: /TaskPlanner\nAverage rate: 132.951 Hz\nMost recent transform: 1126.553 ( 0.010 sec old)\nBuffer length: 4.009 sec\n"];
+"xarm_gripper_base_link" -> "link_attach"[label="Broadcaster: /TaskPlanner\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1126.563 sec old)\nBuffer length: 0.000 sec\n"];
+"xarm_gripper_base_link" -> "left_outer_knuckle"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.250 Hz\nMost recent transform: 1126.546 ( 0.017 sec old)\nBuffer length: 4.000 sec\n"];
+"link_base" -> "link1"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.250 Hz\nMost recent transform: 1126.546 ( 0.017 sec old)\nBuffer length: 4.000 sec\n"];
+"link1" -> "link2"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.250 Hz\nMost recent transform: 1126.546 ( 0.017 sec old)\nBuffer length: 4.000 sec\n"];
+"link2" -> "link3"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.250 Hz\nMost recent transform: 1126.546 ( 0.017 sec old)\nBuffer length: 4.000 sec\n"];
+"link3" -> "link4"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.250 Hz\nMost recent transform: 1126.546 ( 0.017 sec old)\nBuffer length: 4.000 sec\n"];
+"link4" -> "link5"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.250 Hz\nMost recent transform: 1126.546 ( 0.017 sec old)\nBuffer length: 4.000 sec\n"];
+"left_outer_knuckle" -> "left_finger"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.250 Hz\nMost recent transform: 1126.546 ( 0.017 sec old)\nBuffer length: 4.000 sec\n"];
+"xarm_gripper_base_link" -> "left_inner_knuckle"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.250 Hz\nMost recent transform: 1126.546 ( 0.017 sec old)\nBuffer length: 4.000 sec\n"];
+"right_outer_knuckle" -> "right_finger"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.250 Hz\nMost recent transform: 1126.546 ( 0.017 sec old)\nBuffer length: 4.000 sec\n"];
+"xarm_gripper_base_link" -> "right_outer_knuckle"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.250 Hz\nMost recent transform: 1126.546 ( 0.017 sec old)\nBuffer length: 4.000 sec\n"];
+"xarm_gripper_base_link" -> "right_inner_knuckle"[label="Broadcaster: /robot_state_publisher\nAverage rate: 50.250 Hz\nMost recent transform: 1126.546 ( 0.017 sec old)\nBuffer length: 4.000 sec\n"];
+"sensor_frame" -> "GreenBox"[label="Broadcaster: /TaskPlanner\nAverage rate: 132.885 Hz\nMost recent transform: 1126.556 ( 0.007 sec old)\nBuffer length: 4.011 sec\n"];
+"sensor_frame" -> "DepositBoxRed"[label="Broadcaster: /TaskPlanner\nAverage rate: 132.885 Hz\nMost recent transform: 1126.559 ( 0.004 sec old)\nBuffer length: 4.011 sec\n"];
+"sensor_frame" -> "DepositBoxBlue"[label="Broadcaster: /TaskPlanner\nAverage rate: 132.818 Hz\nMost recent transform: 1126.561 ( 0.002 sec old)\nBuffer length: 4.013 sec\n"];
+"sensor_frame" -> "DepositBoxGreen"[label="Broadcaster: /TaskPlanner\nAverage rate: 132.818 Hz\nMost recent transform: 1126.561 ( 0.002 sec old)\nBuffer length: 4.013 sec\n"];
+"sensor_frame" -> "RedBox"[label="Broadcaster: /TaskPlanner\nAverage rate: 132.900 Hz\nMost recent transform: 1126.552 ( 0.011 sec old)\nBuffer length: 4.003 sec\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1126.563"[ shape=plaintext ] ;
+ }->"sensor_frame";
+}
