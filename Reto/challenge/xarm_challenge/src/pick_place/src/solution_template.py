@@ -48,6 +48,10 @@ class Planner():
     self.display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
                                                    moveit_msgs.msg.DisplayTrajectory,
                                                    queue_size=20)
+
+    self.move_group.set_goal_position_tolerance(0.0001)
+    self.move_group.set_goal_orientation_tolerance(0.0001)
+
     ## Comander for gripper
     # Instantiate a robot commander
     
@@ -65,9 +69,10 @@ class Planner():
 
     # Name of the endeffector
     self.eef_link = self.move_group.get_end_effector_link()
-    print( "============ End effector link:", self.eef_link)
     # Change the eef link
-    #self.eef_link = "link_eef"
+    self.eef_link = "link_eef"
+    print( "============ End effector link:", self.eef_link)
+    
 
     # We can get a list of all the groups in the robot:
     group_names = self.robot.get_group_names()
@@ -83,35 +88,87 @@ class Planner():
 
     #TODO: Whenever we change something in moveit we need to make sure that the interface has been updated properly
     # I'm not totally sure, but I believe, here comes the Attach message. 
+    scene = self.scene
+    start = rospy.get_time()
+    seconds = rospy.get_time()
 
-    pass
+    while (seconds - start < timeout) and not rospy.is_shutdown():
+      attached_objects = scene.get_attached_objects([box_name])
+      is_attached = len(attached_objects.keys()) > 0
+      
+      is_known = box_name in scene.get_known_object_names()
+      
+      if (box_is_attached == is_attached) and (box_is_known == is_known):
+        return True
+
+      rospy.sleep(0.1)
+      seconds = rospy.get_time()
+
+    return False
+
+    
   
   def addObstacles(self):
 
     #TODO: Add obstables in the world I belive this is only in rViz
-    box_pose = PoseStamped()
-    box_pose.header.frame_id = str(self.eef_link) 
-      # In this case, we wanna have the box appear near the endeffector, so that's why we use it as a reference plane
-      # The frame_id in a message specifies the point of reference for data contained in that message. 
-    box_pose.pose.orientation.w = 1.0
-    box_pose.pose.position.z = 0.07 # slightly above the end effector
-    box_name = "boxxita"
-    self.scene.add_box(box_name, box_pose, size=(0.1, 0.1, 0.1))
-
-	
     #Cargo names
-      #TODO: Verify the spawn positions
-    targets = [["RedBox", "-0.5163 0.4 1.15 0 -0 -0.1680"],
-               ["BlueBox", "-0.560639 0.275921 1.095 0 -0 0.009847"],
-               ["GreenBox", "0.281412 0.4 1.115 0 -0 0.001827"]]
-    for t in targets:
-      self.scene.add_box(t[0], t[1], size=(0.06, 0.06, 0.06))
+    
+    # The method to obtain the boxes spawm is the following:
+      # From the Gazebo simulation, calculate a transform 
+      # respective to the link_base. 
+    tfBuffer = tf2_ros.Buffer(rospy.Duration(1.0))
+    listener = tf2_ros.TransformListener(tfBuffer)
 
-    #goal names
-    boxes = [["DepositBoxGreen", "0.464197 0.4548 1.06997 3e-06 -2e-06 0.003079"],
-              ["DepositBoxRed", "0.45863 0.238814 1.06997 3e-06 -2e-06 0.003079"],
-               ["DepositBoxBlue", "0.460205 0.022306 1.06997 3e-06 -2e-06 0.003079"]]
-    return box_name
+    targets = ["RedBox",
+               "BlueBox",
+               "GreenBox"]
+               
+    for t in targets:
+      box_pose = PoseStamped()
+      box_pose.header.frame_id = str(self.eef_link) 
+      
+      pose = tfBuffer.lookup_transform("link_base", t,   rospy.Time(), rospy.Duration(1.0))
+      # Once we have registered the pose, store it in a structure PoseStamped
+      box_pose = PoseStamped()
+      box_pose.header.frame_id = self.robot.get_planning_frame()
+      box_pose.pose.position.x = pose.transform.translation.x
+      box_pose.pose.position.y = pose.transform.translation.y
+      # Move the z position up, half the size of the box, or it will be crossing the table
+      box_pose.pose.position.z = 0.03
+
+      box_pose.pose.orientation = pose.transform.rotation
+
+      # This loop spawn the boxes for the planner
+      while not self.wait_for_state_update(t, box_is_known=True, timeout=1.0):
+
+        print(t)
+        # Tells the planner that a box with a certain name in a certain pose
+        # the size is defined in the gazebo_world file xarm_pickplace_test.world
+        self.scene.add_box(t, box_pose, size=(0.06, 0.06, 0.06))
+
+    boxes = ["DepositBoxGreen",
+               "DepositBoxRed",
+               "DepositBoxBlue"
+               ]
+
+    # Same for the containers, adds them for the planner
+    for box in boxes:
+      pose = tfBuffer.lookup_transform("link_base", box,  rospy.Time(), rospy.Duration(1.0))
+      box_pose = PoseStamped()
+      box_pose.header.frame_id = self.robot.get_planning_frame()
+      box_pose.pose.position.x = pose.transform.translation.x
+      box_pose.pose.position.y = pose.transform.translation.y
+      box_pose.pose.position.z = 0.15/2
+
+      box_pose.pose.orientation = pose.transform.rotation
+
+      box_name = box + "_planner"
+
+      while not self.wait_for_state_update(box_name, box_is_known=True, timeout=0.1):
+
+          print(box_name)
+          self.scene.add_box(box_name, box_pose, size=(0.36, 0.15, 0.1))
+    
 
   def goToPose(self,pose_goal):
     #TODO: Code used to move to a given position using move it
@@ -121,7 +178,7 @@ class Planner():
 
     ## Now, we call the planner to compute the plan and execute it.
     plan = self.move_group.go(wait=True)
-    self.move_group.execute(plan, wait=True)
+    #self.move_group.execute(plan, wait=True)
 
     # Calling `stop()` ensures that there is no residual movement
     self.move_group.stop()
@@ -146,7 +203,7 @@ class Planner():
     print("Touch links del attachBox")
     print(touch_links)
     print("-----")
-    self.scene.attach_box(self.eef_link, box_name, touch_links=touch_links)
+    self.scene.attach_box(self.eef_link, box_name, touch_links=["left_finger","right_finger"])
   
   def moveEndeffector (self, pose_goal): 
     self.move_group_Eef.set_pose_target(pose_goal)
@@ -184,7 +241,7 @@ class myNode():
     
     return resp
 
-  def tf_goal(self, goal):
+  def tf_goal(self, goal, closeGrip):
 
     #TODO:Use tf2 to retrieve the position of the target with respect to the proper reference frame
     # Similar to the getGoal method, we use this to
@@ -192,7 +249,7 @@ class myNode():
       # This time, the inputs is a boolean to attach 
       # the objecto to the eef and the frame name to attach
     pickPlace = rospy.ServiceProxy('AttachObject', AttachObject)
-    resp = pickPlace(True, goal)
+    resp = pickPlace(closeGrip, goal)
     
     return resp
     # para mandar la coordenada de mi punto final 
@@ -214,59 +271,73 @@ class myNode():
 
     # Init robot instrunction planner
     self.planner = Planner()
+    self.planner.addObstacles()
     # Create a buffer to read the transformation results
     self.tfBuffer = tf2_ros.Buffer()
     self.listener = tf2_ros.TransformListener(self.tfBuffer)
 
     # Add an obstacle to the environment
-
-    objective = self.getGoal("pick")
-    print("----")
-    print(objective)
-      # To acces the service contents we use:
-        # objective.goal
-        # objective.status
-    print("----")
-    # After we've recieved a green light for attaching the object 
-    # and it's name, we move to it's position and grab it
-    if(objective.status):
-      pose_goal = Pose()
-      #relativePos = self.tfBuffer.lookup_transform(objective.goal, self.planner.planning_frame, rospy.Time(0))
-      relativePos = self.listener.lookup_transform("/link_attach", "/xarm_gripper_base_link", rospy.Time(0))
+    for i in range(1, 6):
+      if (i % 2 == 0):
+        objective = self.getGoal("place")
+      else:
+        objective = self.getGoal("pick")
       
-      pose_goal.orientation.w = relativePos.w
-      pose_goal.position.x = relativePos.x
-      pose_goal.position.y = relativePos.y
-      pose_goal.position.z = relativePos.z
+      print("----")
+      print(objective)
+        # To acces the service contents we use:
+          # objective.goal
+          # objective.status
+      print("----")
+      # After we've recieved a green light for attaching the object 
+      # and it's name, we move to it's position and grab it
+      
+      if(objective.status): 
+        pose_goal = Pose()
+        
+        relativePos = self.tfBuffer.lookup_transform("xarm_gripper_base_link", objective.goal, rospy.Time(0), rospy.Duration(0.5)) # "xarm_gripper_base_link"
+        
+        pose_goal.orientation.w = - relativePos.transform.rotation.w
+        pose_goal.orientation.x = - relativePos.transform.rotation.x #"""1 # To look one"""
+        pose_goal.orientation.y = - relativePos.transform.rotation.y
+        pose_goal.orientation.z = - relativePos.transform.rotation.z
+        
+        pose_goal.position.x = - relativePos.transform.translation.x
+        pose_goal.position.y = - relativePos.transform.translation.y
+        pose_goal.position.z = - relativePos.transform.translation.z + 0.40
+        
+        print("------")
+        print(pose_goal)
+        print("------")
 
-      self.planner.goToPose()
-      while True:
-        # Wait until the object has been picked
-        if self.tf_goal(objective.goal):
+        # Move the robot to a desired position
+        self.planner.goToPose(pose_goal)
+        self.planner.wait_for_state_update(objective.goal)
+        
+        print("Reached postion for ", objective.goal)
+        if (i % 2 == 0):
+          self.planner.detachBox(objective.goal)
+          while True:
+            # Wait until the object has been picked
+            if self.tf_goal(objective.goal, True):
+              break
+
+          print("Houston, I've lost control")
+        else:
+          while True:
+            # Wait until the object has been picked
+            if self.tf_goal(objective.goal, False ):
+              break
           self.planner.attachBox(objective.goal)
           print("Houston, I've got control")
-          break
-    
-
-    
-    # b_name = self.planner.addObstacles()
-    # # MOve the robot to a desired position
-    
-
-    #self.planner.goToPose(pose_goal)
-    # en el launch de rviz gripper    
-
-    # hola = self.planner.move_group.get_random_pose()
-    # self.planner.goToPose(hola)
-    
-      # Move down to pick up box
-      # Attach box 
-      # Move to goal 
-      # Dettach box
+            
+        # Move to goal 
+        
+        # Detach box
+     
     rospy.signal_shutdown("Task Completed")
 
     ## end effector, ponerlo a mirar hacia abajo (last param). DEbe quedar un poco arriba, y después bajarla a que toque 
-
 
 if __name__ == '__main__':
   try:
