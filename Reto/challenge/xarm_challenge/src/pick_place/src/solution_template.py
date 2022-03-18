@@ -203,19 +203,25 @@ class Planner():
     print(touch_links)
     print("-----")
     self.scene.attach_box(self.eef_link, box_name, touch_links=["left_finger","right_finger"])
+    self.moveEndeffector(True)
 
-  def moveEndeffector (self, pose_goal):
+  def moveEndeffector (self, set2open):
+    j = self.move_group_Eef.get_active_joints()
+    print(j)
+    """
+    if set2open:
+      pose_goal
+    else:
+      pass
+    set_joint_value_target (self, arg1, arg2=None, arg3=None)
     self.move_group_Eef.set_pose_target(pose_goal)
-
     ## Now, we call the planner to compute the plan and execute it.
-    plan = self.move_group_Eef.go(wait=True)
-    self.move_group_Eef.execute(plan, wait=True)
-
+    self.move_group_Eef.go(wait=True)
     # Calling `stop()` ensures that there is no residual movement
     self.move_group_Eef.stop()
-
-     # Clear your targets after planning with poses.
+    # Clear your targets after planning with poses.
     self.move_group_Eef.clear_pose_targets()
+    """
 
 class myNode():
   def __init__(self):
@@ -251,19 +257,49 @@ class myNode():
     resp = pickPlace(closeGrip, goal)
 
     return resp
-    # para mandar la coordenada de mi punto final
-    # link base
-    # use tf to ask for a reference frame
-    # We call broadcasting the process of publishing (updating a reference frame to our code)
+  def moveObject_a2b(self, start, goal):
+    pose_start = PoseStamped()
+    pose_start.header.frame_id = "link_base"
 
-    #Relevant toppics: robot_state_publisher-wher the transformation of the robot joints are published
-    #JointState: where the information about change in joints
-       # Where the frame to be attached will
-      # be the object we wanna move around.
+    pose_trans = self.tfBuffer.lookup_transform("link_base", start, rospy.Time(0), rospy.Duration(0.5)) # "xarm_gripper_base_link"
 
-    #Static transforms:
-      # We only need to publish joint state messages
+    pose_start.pose.orientation.w = 0 #- pose_trans.transform.rotation.w
+    pose_start.pose.orientation.x = 1 #- pose_trans.transform.rotation.x # To look one
+    pose_start.pose.orientation.y = 0 #- pose_trans.transform.rotation.y
+    pose_start.pose.orientation.z = 0 #- pose_trans.transform.rotation.z
 
+    pose_trans.transform.translation.z += 0.05
+    pose_start.pose.position = pose_trans.transform.translation
+    #---------------------
+    pose_goal = PoseStamped()
+    pose_goal.header.frame_id = "link_base"
+
+    pose_trans = self.tfBuffer.lookup_transform("link_base", goal, rospy.Time(0), rospy.Duration(0.5)) # "xarm_gripper_base_link"
+
+    pose_goal.pose.orientation.w = 0 #- pose_trans.transform.rotation.w
+    pose_goal.pose.orientation.x = 1 #- pose_trans.transform.rotation.x # To look one
+    pose_goal.pose.orientation.y = 0 #- pose_trans.transform.rotation.y
+    pose_goal.pose.orientation.z = 0 #- pose_trans.transform.rotation.z
+
+    pose_trans.transform.translation.z += 0.2
+    pose_goal.pose.position = pose_trans.transform.translation
+
+    print("-#--#--#-")
+    print("Moving object with object attached")
+    print("Point A:")
+    print(pose_start)
+    print("------")
+    print("Point B:")
+    print(pose_goal)
+    print("-#--#--#-")
+
+    # Actually moving the robot
+    self.planner.goToPose(pose_start)
+
+    self.planner.attachBox(start)
+    self.planner.goToPose(pose_goal)
+    self.planner.detachBox(start)
+    
 
   def main(self):
     #TODO: Main code that contains the aplication
@@ -275,91 +311,19 @@ class myNode():
     self.tfBuffer = tf2_ros.Buffer()
     self.listener = tf2_ros.TransformListener(self.tfBuffer)
 
-    objective = self.getGoal("pick")
+    start = self.getGoal("pick")
+    endpoint = self.getGoal("place")
     print("----")
-    print(objective)
+    print(start)
+    print(endpoint)
     print("----")
 
     # self.robot.get_planning_frame()
-    pose_goal = PoseStamped()
-    pose_goal.header.frame_id = "link_base"
-
-    pose_trans = self.tfBuffer.lookup_transform("link_base", objective.goal, rospy.Time(0), rospy.Duration(0.5)) # "xarm_gripper_base_link"
-
-    pose_goal.pose.orientation.w = 0 #- pose_trans.transform.rotation.w
-    pose_goal.pose.orientation.x = 1 #- pose_trans.transform.rotation.x # To look one
-    pose_goal.pose.orientation.y = 0 #- pose_trans.transform.rotation.y
-    pose_goal.pose.orientation.z = 0 #- pose_trans.transform.rotation.z
-
-    pose_trans.transform.translation.z += 0.05
-    pose_goal.pose.position = pose_trans.transform.translation
+    self.moveObject_a2b(start.goal, endpoint.goal)
     
 
-    print("-#--#--#-")
-    print(pose_goal)
-    print("-#--#--#-")
-    self.planner.goToPose(pose_goal)
-
     # Add an obstacle to the environment
-    """
-    for i in range(1, 6):
-      if (i % 2 == 0):
-        objective = self.getGoal("place")
-      else:
-        objective = self.getGoal("pick")
-
-      print("----")
-      print(objective)
-        # To acces the service contents we use:
-          # objective.goal
-          # objective.status
-      print("----")
-      # After we've recieved a green light for attaching the object
-      # and it's name, we move to it's position and grab it
-
-      if(objective.status):
-        pose_goal = Pose()
-
-        relativePos = self.tfBuffer.lookup_transform(self.planner.eef_link, objective.goal, rospy.Time(0), rospy.Duration(0.5)) # "xarm_gripper_base_link"
-
-        pose_goal.orientation.w = - relativePos.transform.rotation.w
-        pose_goal.orientation.x = - relativePos.transform.rotation.x # To look one
-        pose_goal.orientation.y = - relativePos.transform.rotation.y
-        pose_goal.orientation.z = - relativePos.transform.rotation.z
-
-        pose_goal.position.x = - relativePos.transform.translation.x
-        pose_goal.position.y = - relativePos.transform.translation.y
-        pose_goal.position.z = - relativePos.transform.translation.z + 0.40
-
-        print("------")
-        print(pose_goal)
-        print("------")
-
-        # Move the robot to a desired position
-        self.planner.goToPose(pose_goal)
-        self.planner.wait_for_state_update(objective.goal)
-
-        print("Reached postion for ", objective.goal)
-        if (i % 2 == 0):
-          self.planner.detachBox(objective.goal)
-          while True:
-            # Wait until the object has been picked
-            if self.tf_goal(objective.goal, True):
-              break
-
-          print("Houston, I've lost control")
-        else:
-          while True:
-            # Wait until the object has been picked
-            if self.tf_goal(objective.goal, False):
-              break
-          self.planner.attachBox(objective.goal)
-          print("Houston, I've got control")
-
-        # Move to goal
-
-        # Detach box
-    """
+    
     rospy.signal_shutdown("Task Completed")
 
     ## end effector, ponerlo a mirar hacia abajo (last param). Debe quedar un poco arriba, y después bajarla a que toque
