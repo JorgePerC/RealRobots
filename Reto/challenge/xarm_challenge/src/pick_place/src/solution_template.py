@@ -31,8 +31,6 @@ class Planner():
     #TODO: Initialize rosnode -> The class defined downwards
     rospy.init_node('myNode', anonymous=True)
 
-    #Python node
-
     # Instantiate a robot commander
       # Provides information such as the robot’s kinematic model and the robot’s current joint states
     self.robot = moveit_commander.RobotCommander()
