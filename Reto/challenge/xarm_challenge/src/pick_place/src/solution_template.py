@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from fileinput import filename
-import re
+from time import sleep
 import rospy
 import sys
 import tf_conversions
@@ -15,8 +15,6 @@ from geometry_msgs.msg import PoseStamped, Pose
 from tf.transformations import *
 from moveit_msgs.msg import Grasp
 import math
-# Tried to read xml files
-import xml.dom.minidom
 # Import services definitions
 from path_planner.srv import RequestGoal,RequestGoalResponse,AttachObject,AttachObjectResponse
 from gazebo_ros_link_attacher.srv import Attach, AttachRequest, AttachResponse
@@ -67,13 +65,11 @@ class Planner():
     self.planning_frame = "link_base"
     print ("============ Planning frame:", self.planning_frame)
 
-
     # Name of the endeffector
     self.eef_link = self.move_group.get_end_effector_link()
     # Change the eef link
     self.eef_link = "link_eef"
     print( "============ End effector link:", self.eef_link)
-
 
     # We can get a list of all the groups in the robot:
     group_names = self.robot.get_group_names()
@@ -82,13 +78,11 @@ class Planner():
     # robot:
     print ("============ Printing robot state")
     print (self.robot.get_current_state())
-
     print ("")
 
   def wait_for_state_update(self,box_name, box_is_known=False, box_is_attached=False, timeout=0.5):
 
     #TODO: Whenever we change something in moveit we need to make sure that the interface has been updated properly
-    # I'm not totally sure, but I believe, here comes the Attach message.
     scene = self.scene
     start = rospy.get_time()
     seconds = rospy.get_time()
@@ -107,25 +101,20 @@ class Planner():
 
     return False
 
-
-
   def addObstacles(self):
-
-    #TODO: Add obstables in the world I belive this is only in rViz
-    #Cargo names
-
+    # Add obstables in the world I belive this is only in rViz
+    
     # The method to obtain the boxes spawm is the following:
       # From the Gazebo simulation, calculate a transform
       # respective to the link_base.
     tfBuffer = tf2_ros.Buffer(rospy.Duration(1.0))
     listener = tf2_ros.TransformListener(tfBuffer)
-
+    # Cargo names
     targets = ["RedBox",
                "BlueBox",
                "GreenBox"]
 
     for t in targets:
-
       pose = tfBuffer.lookup_transform("link_base", t,   rospy.Time(), rospy.Duration(1.0))
       # Once we have registered the pose, store it in a structure PoseStamped
       box_pose = PoseStamped()
@@ -164,64 +153,81 @@ class Planner():
       box_pose.pose.orientation = pose.transform.rotation
 
       while not self.wait_for_state_update(box, box_is_known=True, timeout=0.1):
-
           print(box)
           self.scene.add_box(box, box_pose, size=(0.36, 0.15, 0.1))
 
-
   def goToPose(self,pose_goal):
-    #TODO: Code used to move to a given position using move it
+    # Code used to move to a given position using move it
 
     # First, we plan the motion path to get to the desired pose
     self.move_group.set_pose_target(pose_goal)
 
     ## Now, we call the planner to compute the plan and execute it.
-    plan = self.move_group.go(wait=True)
-    #self.move_group.execute(plan, wait=True)
-
+    self.move_group.go(wait=True)
     # Calling `stop()` ensures that there is no residual movement
     self.move_group.stop()
 
-     # Clear your targets after planning with poses.
+    # Clear your targets after planning with poses.
     self.move_group.clear_pose_targets()
 
 
   def detachBox(self,box_name):
 
     #TODO: Open the gripper and call the service that releases the box
-
     # Release box:
     self.scene.remove_attached_object(self.eef_link, name=box_name)
 
+    self.moveEndeffector(False)
+    
+    self.wait_for_state_update(box_name, box_is_attached=False, box_is_known=True)
 
   def attachBox(self,box_name):
 
     #TODO: Close the gripper and call the service that releases the box
     grasping_group = "xarm_gripper"
     touch_links = self.robot.get_link_names(group=grasping_group)
-    print("Touch links del attachBox")
-    print(touch_links)
-    print("-----")
-    self.scene.attach_box(self.eef_link, box_name, touch_links=["left_finger","right_finger"])
+    self.scene.attach_box(self.eef_link, box_name, size = (0.06, 0.06, 0.06), touch_links=touch_links)
+
+    self.wait_for_state_update(box_name, box_is_attached=True, box_is_known=True)
     self.moveEndeffector(True)
 
   def moveEndeffector (self, set2open):
-    j = self.move_group_Eef.get_active_joints()
-    print(j)
-    """
-    if set2open:
-      pose_goal
+    
+    jointPositions = {
+      'drive_joint': 0,
+      'left_finger_joint': 0,
+      'left_inner_knuckle_joint': 0,
+      'right_inner_knuckle_joint': 0,
+      'right_outer_knuckle_joint': 0,
+      'right_finger_joint': 0}
+    
+    
+    if not(set2open):
+      
+      jointPositions["drive_joint"] = 0
+      jointPositions["left_finger_joint"] = 0
+      jointPositions["left_inner_knuckle_joint"] = 0
+      jointPositions["right_inner_knuckle_joint"] = 0
+      jointPositions["right_outer_knuckle_joint"] = 0
+      jointPositions["right_finger_joint"] = 0
+
     else:
-      pass
-    set_joint_value_target (self, arg1, arg2=None, arg3=None)
-    self.move_group_Eef.set_pose_target(pose_goal)
+      jointPositions["drive_joint"] = 0.25  
+      jointPositions["left_finger_joint"] = 0.25
+      jointPositions["left_inner_knuckle_joint"] = 0.25
+      jointPositions["right_inner_knuckle_joint"] = 0.25
+      jointPositions["right_outer_knuckle_joint"] = 0.25
+      jointPositions["right_finger_joint"] = 0.25
+
+    self.move_group_Eef.set_joint_value_target(jointPositions)
+    #self.move_group_Eef.set_pose_target(pose_goal)
     ## Now, we call the planner to compute the plan and execute it.
     self.move_group_Eef.go(wait=True)
     # Calling `stop()` ensures that there is no residual movement
     self.move_group_Eef.stop()
     # Clear your targets after planning with poses.
     self.move_group_Eef.clear_pose_targets()
-    """
+    
 
 class myNode():
   def __init__(self):
@@ -264,11 +270,11 @@ class myNode():
     pose_trans = self.tfBuffer.lookup_transform("link_base", start, rospy.Time(0), rospy.Duration(0.5)) # "xarm_gripper_base_link"
 
     pose_start.pose.orientation.w = 0 #- pose_trans.transform.rotation.w
-    pose_start.pose.orientation.x = 1 #- pose_trans.transform.rotation.x # To look one
+    pose_start.pose.orientation.x = 1 - pose_trans.transform.rotation.x # To look one
     pose_start.pose.orientation.y = 0 #- pose_trans.transform.rotation.y
     pose_start.pose.orientation.z = 0 #- pose_trans.transform.rotation.z
 
-    pose_trans.transform.translation.z += 0.05
+    pose_trans.transform.translation.z += 0.0
     pose_start.pose.position = pose_trans.transform.translation
     #---------------------
     pose_goal = PoseStamped()
@@ -297,8 +303,10 @@ class myNode():
     self.planner.goToPose(pose_start)
 
     self.planner.attachBox(start)
+    self.tf_goal(start, True)
     self.planner.goToPose(pose_goal)
     self.planner.detachBox(start)
+    self.tf_goal(start, False)
     
 
   def main(self):
@@ -311,18 +319,16 @@ class myNode():
     self.tfBuffer = tf2_ros.Buffer()
     self.listener = tf2_ros.TransformListener(self.tfBuffer)
 
-    start = self.getGoal("pick")
-    endpoint = self.getGoal("place")
-    print("----")
-    print(start)
-    print(endpoint)
-    print("----")
+    for i in range (3): 
+      start = self.getGoal("pick")
+      endpoint = self.getGoal("place")
+      print("----")
+      print(start)
+      print(endpoint)
+      print("----")
 
-    # self.robot.get_planning_frame()
-    self.moveObject_a2b(start.goal, endpoint.goal)
-    
-
-    # Add an obstacle to the environment
+      self.moveObject_a2b(start.goal, endpoint.goal)
+      sleep(10)
     
     rospy.signal_shutdown("Task Completed")
 
