@@ -1,0 +1,5 @@
+pick_place
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/pick_place/cmake.lock /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/./cmake.lock
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/pick_place/share/pick_place/cmake/pick_placeConfig-version.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/pick_place/cmake/pick_placeConfig-version.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/pick_place/share/pick_place/cmake/pick_placeConfig.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/pick_place/cmake/pick_placeConfig.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/pick_place/lib/pkgconfig/pick_place.pc /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/pkgconfig/pick_place.pc

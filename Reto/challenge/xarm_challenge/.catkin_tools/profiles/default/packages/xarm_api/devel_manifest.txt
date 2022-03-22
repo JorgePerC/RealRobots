@@ -1,0 +1,14 @@
+xarm_ros/xarm_api
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_api/cmake.lock /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/./cmake.lock
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_api/share/xarm_api/cmake/xarm_apiConfig.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/xarm_api/cmake/xarm_apiConfig.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_api/share/xarm_api/cmake/xarm_apiConfig-version.cmake /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/share/xarm_api/cmake/xarm_apiConfig-version.cmake
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_api/lib/libxarm_ros_client.so /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/libxarm_ros_client.so
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_api/lib/xarm_api/test_xarm_ros_client /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/xarm_api/test_xarm_ros_client
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_api/lib/xarm_api/servo_cartesian_test /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/xarm_api/servo_cartesian_test
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_api/lib/xarm_api/test_xarm_velo_move /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/xarm_api/test_xarm_velo_move
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_api/lib/xarm_api/example1_report_norm /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/xarm_api/example1_report_norm
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_api/lib/xarm_api/xarm_driver_node /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/xarm_api/xarm_driver_node
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_api/lib/xarm_api/test_tool_modbus /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/xarm_api/test_tool_modbus
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_api/lib/xarm_api/move_test /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/xarm_api/move_test
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_api/lib/xarm_api/test_xarm_states /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/xarm_api/test_xarm_states
+/home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/.private/xarm_api/lib/pkgconfig/xarm_api.pc /home/jorgepc/Documents/RealRobots/Reto/challenge/xarm_challenge/devel/lib/pkgconfig/xarm_api.pc

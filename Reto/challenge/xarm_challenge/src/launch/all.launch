@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node pkg="path_planner" name="GoalPlanner" type="GoalPlanner.py" args=""/>
+    <node pkg="pick_place" name="solution_template" type="solution_template.py" args=""/>
+
+</launch>
